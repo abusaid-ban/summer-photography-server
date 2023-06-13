@@ -27,6 +27,7 @@ async function run() {
         await client.connect();
         const classesCollection = client.db("summerCamp").collection("classes");
         const instructorsCollection = client.db("summerCamp").collection("instructors");
+        const reviewsCollection = client.db("summerCamp").collection("reviews");
 
         app.get('/classes',async(req,res)=>{
             const result = await classesCollection.find().toArray();
@@ -35,6 +36,11 @@ async function run() {
         })
         app.get('/instructors',async(req,res)=>{
             const result = await instructorsCollection.find().toArray();
+            res.send(result);
+
+        })
+        app.get('/reviews',async(req,res)=>{
+            const result = await reviewsCollection.find().toArray();
             res.send(result);
 
         })
