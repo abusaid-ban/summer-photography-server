@@ -28,6 +28,7 @@ async function run() {
         const classesCollection = client.db("summerCamp").collection("classes");
         const instructorsCollection = client.db("summerCamp").collection("instructors");
         const reviewsCollection = client.db("summerCamp").collection("reviews");
+        const cartsCollection = client.db("summerCamp").collection("carts");
 
         app.get('/classes',async(req,res)=>{
             const result = await classesCollection.find().toArray();
@@ -43,6 +44,15 @@ async function run() {
             const result = await reviewsCollection.find().toArray();
             res.send(result);
 
+        })
+
+        // carts collection
+
+        app.post('/carts',async(req,res)=>{
+            const item = req.body;
+            console.log(item)
+            const result = await cartsCollection.insertOne(item);
+            res.send(result);
         })
 
 
