@@ -25,48 +25,66 @@ async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
+        const usersCollection = client.db("summerCamp").collection("users");
         const classesCollection = client.db("summerCamp").collection("classes");
         const instructorsCollection = client.db("summerCamp").collection("instructors");
         const reviewsCollection = client.db("summerCamp").collection("reviews");
         const cartsCollection = client.db("summerCamp").collection("carts");
+        
+        // users related apis
+        app.post('/users',async(req,res)=>{
+            const user = req.body;
+            console.log(user);
+            const query ={email : user.email}
+            const existingUser =await usersCollection.findOne(query);
+            console.log('existing user',existingUser)
+            if(existingUser){
+                return res.send({message : 'user already exists'})
+            }
+            const result = await usersCollection.insertOne(user);
+            res.send(result);
+        })
 
-        app.get('/classes',async(req,res)=>{
+        // classes related apis
+        app.get('/classes', async (req, res) => {
             const result = await classesCollection.find().toArray();
             res.send(result);
 
         })
-        app.get('/instructors',async(req,res)=>{
+        // instructors related apis
+        app.get('/instructors', async (req, res) => {
             const result = await instructorsCollection.find().toArray();
             res.send(result);
 
         })
-        app.get('/reviews',async(req,res)=>{
+        // reviews related apis
+        app.get('/reviews', async (req, res) => {
             const result = await reviewsCollection.find().toArray();
             res.send(result);
 
         })
 
-        // carts collection
-        app.get('/carts',async(req,res)=>{
+        // carts collection apis
+        app.get('/carts', async (req, res) => {
             const email = req.query.email;
-            if(!email){
+            if (!email) {
                 res.send([]);
             }
-            const query = {email : email}
+            const query = { email: email }
             const result = await cartsCollection.find(query).toArray();
             res.send(result);
         })
 
-        app.post('/carts',async(req,res)=>{
+        app.post('/carts', async (req, res) => {
             const item = req.body;
-           
+
             const result = await cartsCollection.insertOne(item);
             res.send(result);
         })
 
-        app.delete('/carts/:id',async(req,res)=>{
+        app.delete('/carts/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id : new ObjectId(id)};
+            const query = { _id: new ObjectId(id) };
             const result = await cartsCollection.deleteOne(query);
             res.send(result);
         })
